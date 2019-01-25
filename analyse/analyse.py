@@ -25,18 +25,27 @@ def ESPRIT(s, ordre):
     zeta: numpy array
         Corresponding damping
 
-    Example
-    -------
+    Examples
+    --------
 
-    >>> x = np.random.randn(1000)
-    >>> f,zeta = ESPRIT(x, 20)
+    In this example, we show how to properly use the ESPRIT function by creating
+    a 10Hz damped cosine with a damping factor of 0.5 and trying to get those
+    parameters back with ESPRIT.
+
+    >>> t = np.linspace(0,1,2000) # One second sampled at 2000Hz
+    >>> s = np.cos(2*np.pi*10*t)  # Compute a cosine at f = 10Hz
+    >>> d = np.exp(-.5*t)         # Compute a damping of 0.5
+    >>> f,zeta = ESPRIT(s*d,2)    # Estimation of f and damping
+    >>> print(f*2000, zeta*2000)  # Multiply by sampling rate
+    [ 10.013694 -10.013694] [-0.500378 -0.500378]
+
 
     """
     with torch.no_grad():
-        s = s.to(device)
+        s = torch.from_numpy(s)
         N = len(s)
         H = torch.from_numpy(
-            hankel(np.arange(N // 3), np.arange(N // 3, N))).to(device)
+            hankel(np.arange(N // 3), np.arange(N // 3, N)))
         H = s[H.long()]
         H = torch.mm(H, H.transpose(0, 1))
         U, S, V = torch.svd(H, some=False)
@@ -46,15 +55,13 @@ def ESPRIT(s, ordre):
     z = z[:, 0] + 1j * z[:, 1]
     f = np.angle(z) / (2 * np.pi)
     zeta = -np.log(abs(z))
-    torch.cuda.empty_cache()
+
     return f, zeta
 
 if __name__ == "__main__":
     print("Extracting data...\033[3m")
     os.system("tar -xvf tom.tar.gz")
     print("\033[0mDone! Analysis...\n")
-    #device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-    device = torch.device("cpu")
 
     list_files = glob("*.wav")
 
@@ -70,7 +77,7 @@ if __name__ == "__main__":
 
         for i, peak in enumerate(peaks):
             print("%s, peak %d            " % (sf, i), end="\r", flush=True)
-            s = torch.from_numpy(x[peak + delta:peak + delta + N]).float()
+            s = x[peak + delta:peak + delta + N]
             [f, zeta] = ESPRIT(s, 20)
 
             analyse[sf].append([i, s.numpy(), f * fs, zeta * fs])
