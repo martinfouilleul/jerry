@@ -39,9 +39,15 @@ class Tom(object):
         self.rho = 1.225
         self.n_modes = M.shape[0]
 
-        self.dvdphi_n = 2*np.pi**2*np.array([quad(lambda r: jv(0,jn_zeros(0, n+1)[-1] * r / self.a), 0, self.a)[0] for n in range(self.n_modes)])
+        self.poly = np.load("poly.npy")
+
+        self.dvdphi_n = 2*np.pi**2*np.array([quad(lambda r: jv(0,\
+                        jn_zeros(0, n+1)[-1] * r / self.a), \
+                        0, self.a)[0] for n in range(self.n_modes)])
 
         self.eta = np.zeros([n_modes, 3])
+
+        self.exp_hp = np.zeros(2)
 
 
 
@@ -55,7 +61,10 @@ class Tom(object):
         return self.eta[:,-1]
 
     def dt2(self, x) -> np.ndarray:
-        pass
+        acc = self.fs**2 * (x + self.exp_hp[0] - 2*self.exp_hp[1])
+        self.exp_hp = np.roll(self.exp_hp, -1, 0)
+        self.exp_hp[-1] = x
+        return x
 
 
     def getMicroPressure(self, x):
