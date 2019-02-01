@@ -1,5 +1,6 @@
 .DS_Store
 *.wav
 analyse/*.npy
-doc/_*
+doc/*
 *__pycache__*
+*.ipynb_ch*
