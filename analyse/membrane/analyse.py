@@ -80,6 +80,6 @@ if __name__ == "__main__":
             s = x[peak + delta:peak + delta + N]
             [f, zeta] = ESPRIT(s, 20)
 
-            analyse[sf].append([i, s.numpy(), f * fs, zeta * fs])
+            analyse[sf].append([i, s, f * fs, zeta * fs])
 
     np.save("analyse", analyse)
