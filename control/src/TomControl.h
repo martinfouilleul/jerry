@@ -1,3 +1,4 @@
+//AUTHOR: ANTOINE CAILLON
 #pragma once
 
 class Tom

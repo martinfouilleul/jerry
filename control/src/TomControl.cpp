@@ -1,3 +1,4 @@
+//AUTHOR: ANTOINE CAILLON
 #include "TomControl.h"
 #include <iostream>
 
