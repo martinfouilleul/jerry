@@ -1,7 +1,7 @@
 #include "TomControl.h"
 #include <iostream>
 
-#define WARMUP_N 1
+#define WARMUP_N 1000
 
 //#########################TOM METHODS IMPLEMENTATION###########################
 

@@ -26,21 +26,36 @@ init     = lambda sr, omdes, zetades, gamma, zeta, omega, l1, l2:\
                      c.c_float(l2))
 
 
-sr = 22050
+sr = 44100
 
 
-init(sr, np.pi*2*200, 2e-2, 100, 2e-2, np.pi*2*218, .1, .1)
+
+fm = 218
+freq = [200, 210, 220, 230]
+
 
 
 x_c = np.zeros(sr)
 t = np.linspace(0,1,sr)
 
-disp = (np.sin(2*np.pi*218*t) + np.random.randn(sr)/30)*1e-3
+disp = (np.sin(2*np.pi*fm*t) + np.random.randn(sr)/30)*4e-3
+disp*= np.exp(-2e-2*t*2*np.pi*fm)
 
-disp = convolve(firwin(100, 300/sr), disp)
+# disp = np.pad(disp, (10000,0), "constant")
 
-for i in range(sr):
-    x_c[i] = getNextU(disp[i])
+disp_filtered = convolve(firwin(100, 300/sr), disp)
 
-plt.plot(x_c)
+plt.plot(disp/max(abs(disp)),".")
+
+for f in freq:
+
+    init(sr, np.pi*2*f, 2e-2, 100, 2e-2, np.pi*2*fm, .1, .1)
+
+    for i in range(sr):
+        x_c[i] = getNextU(disp_filtered[i])
+
+    plt.plot(x_c)
+
+plt.legend(["Membrane %dHz" % fm] + ["HP %dHz" % f for f in freq])
+plt.grid()
 plt.show()
