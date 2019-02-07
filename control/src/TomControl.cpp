@@ -1,4 +1,5 @@
 #include "TomControl.h"
+#include <iostream>
 
 //#########################TOM METHODS IMPLEMENTATION###########################
 
@@ -8,6 +9,10 @@ m_dt(1/float(sr)), m_state(), m_mes()
 
 }
 
+Tom::Tom()
+{
+
+}
 
 float Tom::next(float new_sample)
 {
@@ -29,6 +34,12 @@ float Tom::next(float new_sample)
 
 Control::Control(Tom *tom, float gamma, float zeta, float omega, float l1, float l2):
 m_tom(tom), m_gamma(gamma), m_zeta(zeta), m_omega(omega), m_l1(l1), m_l2(l2)
+{
+    m_sr = tom->m_sr;
+    m_dt = tom->m_dt;
+}
+
+Control::Control()
 {
 
 }

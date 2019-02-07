@@ -3,6 +3,7 @@
 class Tom
 {
 public:
+    Tom();
     Tom(int sr, float omega, float zeta);
     float next(float new_sample);
 protected:
@@ -14,6 +15,7 @@ protected:
 class Control
 {
 public:
+    Control();
     Control(Tom *tom, float gamma, float zeta, float omega, float l1, float l2);
     float next(float new_sample);
     float dfdt(float *x, int N);
