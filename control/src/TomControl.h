@@ -1,28 +1,33 @@
-//AUTHOR: ANTOINE CAILLON
 #pragma once
 
-class Tom
+struct TomController
 {
-public:
-    Tom();
-    Tom(int sr, float omega, float zeta);
-    void next(float new_sample);
-protected:
-    int m_sr;
-    float m_dt, m_omega, m_zeta, m_state[2], m_mes[3];
-    friend class Control;
-};
+    TomController(int sr,
+		  float omega,
+		  float zeta,
+		  float gamma,
+		  float omegaDesired,
+		  float zetaDesired,
+		  float l1,
+		  float l2);
 
-class Control
-{
-public:
-    Control();
-    Control(Tom *tom, float gamma, float zeta, float omega, float l1, float l2);
-    float next(float new_sample);
+    float nextStep(float measure);
     float dfdt(float *x, int N);
-protected:
-    Tom *m_tom;
-    float m_sr, m_dt, m_gamma, m_zeta, m_omega, m_l1, m_l2;
-    int warmup;
 
+    float m_sr;
+    float m_dt;
+
+    float m_omegaDesired;
+    float m_zetaDesired;
+
+    float m_gamma;
+    float m_zeta;
+    float m_omega;
+    float m_l1;
+    float m_l2;
+
+    float m_state[2];
+    float m_mes[3];
+
+    int warmup;
 };
