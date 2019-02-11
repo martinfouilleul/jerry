@@ -1,0 +1,22 @@
+
+
+#ifndef _PRU_
+#define _PRU_
+
+#define PRU0_ARM_INTERRUPT      19
+#define PRU1_ARM_INTERRUPT      20
+
+#define DAC_DIN r30.t0		// pin P8.45
+#define DAC_SCLK r30.t1		// pin P8.46
+#define DAC_SYNC r30.t2		// pin P8.43
+
+#define ADC_DOUT r31.t9		// pin P8.29
+#define ADC_SCLK r30.t3		// pin P8.44
+#define ADC_CONVST r30.t5	// pin P8.42
+
+// NOP 
+.macro NOP
+MOV r0,r0
+.endm
+
+#endif

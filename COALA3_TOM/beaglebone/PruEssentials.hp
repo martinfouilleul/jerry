@@ -1,0 +1,204 @@
+//
+//      .-. .-.   .-. .-. . . .-. .-. .-. .   
+//      |(   |    |   | | |\|  |  |(  | | |   
+//      ' '  '    `-' `-' ' `  '  ' ' `-' `-' 
+//
+//      @ Ircam 2014
+//      PruEssentials.hp
+//      Header file for ASM PRU code
+//      programmed by Robert Piechaud
+//
+                                   
+#include "PruEssentials.h"
+
+#ifndef _PRU_ESSENTIALS_HP_
+#define _PRU_ESSENTIALS_HP_
+
+#define DAC_DIN r30.t0		// pin P8.45
+#define DAC_SCLK r30.t1		// pin P8.46
+#define DAC_SYNC r30.t2		// pin P8.43
+
+#define ADC_DOUT r31.t9		// pin P8.29
+#define ADC_SCLK r30.t3		// pin P8.44
+#define ADC_CONVST r30.t5	// pin P8.42
+
+//#define AM33XX
+
+#define MEMORY CONST_PRUDRAM
+#define MEMORY_LOCAL_DATARAM   0x00000000
+#define MEMORY_LOCAL_SHAREDRAM 0x00010000
+
+// Refer to this mapping in the file - \prussdrv\include\pruss_intc_mapping.h
+#define PRU0_PRU1_INTERRUPT     17
+#define PRU1_PRU0_INTERRUPT     18
+#define PRU0_ARM_INTERRUPT      19
+#define PRU1_ARM_INTERRUPT      20
+#define ARM_PRU0_INTERRUPT      21
+#define ARM_PRU1_INTERRUPT      22
+
+#define CONST_PRUDRAM   C24
+#define CONST_SHAREDRAM C28
+#define CONST_L3RAM     C30
+#define CONST_DDR       C31
+
+
+// Address for the Constant table Programmable Pointer Register 0(CTPPR_0)
+#define CTPPR_0         0x22028
+// Address for the Constant table Programmable Pointer Register 1(CTPPR_1)
+#define CTPPR_1         0x2202C
+
+#define PRU0CONTROL 0x00022000
+#define CYCLECOUNTER_ADDRESS 0x0002200c
+
+// ------- Addresses Offset (AO) -------
+/*
+#define AO_DATAIN_REQUEST 0x34
+#define AO_DATAIN_READY 0x38
+#define AO_DATAOUT_READY 0x44
+#define AO_INPUTVALUE 0x30
+#define AO_OUTPUTVALUE 0x40
+*/
+// -------------------------------------
+
+
+// resolution of adc / dac
+#define NBIT 16
+// to slow down time between conversions
+#define NCYCLES_SLOW 100
+
+//----------------- PINS ---------------
+// P8.45 = SCK_DAC = r30.t0
+#define SCK_DAC r30.t0
+// P8.43 = MOSI = r30.t2
+#define MOSI r30.t2
+// P8.46 = CS = r30.t1
+#define CS r30.t1
+// P8.41 = SCK_ADC = r30.t4
+#define SCK_ADC r30.t4
+// P8.44 = MISO = r31.t3
+#define MISO r31.t3
+// P8.42 = CNVST = r30.t5
+#define CNVST r30.t5
+// P8.40 = BUSY = r31.t7
+#define BUSY r31.t7
+// -------------------------------------
+
+
+// ---------- WORK REGISTERS ----------
+#define BITCOUNTER r2
+#define SLOW_COUNTER r25
+// Registers containing values
+
+// cpu write, pru read: 
+#define R_DATAIN_REQUEST r22
+
+// cpu read, pru write:
+#define R_DATAIN_READY r23
+
+// cpu write, pru read:
+#define R_DATAOUT_READY r24
+
+// cpu read, pru write:
+#define R_DATAOUT_DONE r25
+
+// cpu read, pru write:
+#define R_INPUTVALUE r26
+
+// cpu write, pru read:
+#define R_OUTPUTVALUE r27
+
+// -------------------------------------
+
+
+#define BASE_ADDRESS_REG       r10
+
+// ---------------- MACRO --------------
+// NOP 
+.macro NOP
+MOV r0,r0
+.endm
+
+// send 1 to the dac
+.macro M_SET_DATA
+	SET MOSI
+	LSL R_OUTPUTVALUE, R_OUTPUTVALUE, 1 // left shift
+	JMP NEXT2
+.endm
+
+// send 0 to the dac
+.macro M_CLEAR_DATA
+	CLR MOSI
+	LSL R_OUTPUTVALUE, R_OUTPUTVALUE, 1 // left shift
+	JMP NEXT2
+.endm
+
+// read 1 from the adc
+.macro M_READ_SET_DATA
+	SET R_INPUTVALUE.t0
+	LSL R_INPUTVALUE, R_INPUTVALUE, 1
+	JMP NEXT
+.endm
+
+// read 0 from the adc
+.macro M_READ_CLR_DATA
+	CLR R_INPUTVALUE.t0
+	LSL R_INPUTVALUE, R_INPUTVALUE, 1
+	JMP NEXT
+.endm
+
+
+
+.macro  LD32
+.mparam dst,src
+    LBBO    dst,src,#0x00,4
+.endm
+
+.macro  LD16
+.mparam dst,src
+    LBBO    dst,src,#0x00,2
+.endm
+
+.macro  LD8
+.mparam dst,src
+    LBBO    dst,src,#0x00,1
+.endm
+
+.macro ST32
+.mparam src,dst
+    SBBO    src,dst,#0x00,4
+.endm
+
+.macro ST16
+.mparam src,dst
+    SBBO    src,dst,#0x00,2
+.endm
+
+.macro ST8
+.mparam src,dst
+    SBBO    src,dst,#0x00,1
+.endm
+// -------------------------------------
+
+#define sp r0
+#define lr r23
+#define STACK_TOP       (0x2000 - 4)
+#define STACK_BOTTOM    (0x2000 - 0x200)
+
+.macro stack_init
+    mov     sp, STACK_BOTTOM
+.endm
+
+.macro push
+.mparam reg, cnt
+    sbbo    reg, sp, 0, 4*cnt
+    add     sp, sp, 4*cnt
+.endm
+
+.macro pop
+.mparam reg, cnt
+    sub     sp, sp, 4*cnt
+    lbbo    reg, sp, 0, 4*cnt
+.endm
+
+
+#endif

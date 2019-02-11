@@ -1,0 +1,147 @@
+body {
+  background: url(../images/coala5.png) fixed left top no-repeat;
+  font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+}
+
+.center-container {
+  width: 1000px;
+}
+
+.controls-wrapper {
+   border-radius:8px;
+  /*border-color:#f5f5f5;*/
+  border-width:2px;
+  background:rgba(220,220,220,0.5);
+  padding: 8px;
+  margin: 10px;
+  width: 450px;
+  float: left;
+}
+
+.info
+{
+  float: left;
+  padding: 8px;
+  margin: 10px;
+  border-radius:8px;
+  background:rgba(0,0,220,0.1);
+  width:400px;
+  height: 530px;
+  border-width:2px;
+  color: rgb(128,128,128);
+}
+
+#coalastatus
+{
+  font-size: 12px;
+  float: left;
+  margin-top: 20px;
+}
+
+div.diagram
+{
+  /*float: left;*/
+  position: relative;
+}
+
+div.switch
+{
+  position: absolute;
+  width: 40px;
+}
+
+#modalswitch
+{
+  top: 9px;
+  left: 101px;
+}
+
+#modulatedgainswitch
+{
+  top: 43px;
+  left: 101px;
+}
+
+#biquadswitch
+{
+  top: 77px;
+  left: 101px;
+}
+
+#genswitch
+{
+  top: 112px;
+  left: 101px;
+}
+
+#chirpswitch
+{
+  top: 145px;
+  left: 214px;
+}
+
+#elapsed
+{
+  font-family: "Courier New", sans-serif;
+  font-size:22px; 
+  color: black;
+  margin-left: 130px;
+}
+
+.title
+{
+  font-size:24px; 
+  margin: 5px;
+}
+
+.message
+{
+  font-size:13px;
+  font-style:italic;
+  color:gray;
+}
+
+.disabledcontent {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+.twicebigger {
+  zoom:1.2;
+  transform:scale(1.2);
+  -ms-transform:scale(1.2);
+  -webkit-transform:scale(1.2);
+  -o-transform:scale(1.2);
+  -moz-transform:scale(1.2);
+  transform-origin:0 0;
+  -ms-transform-origin:0 0;
+  -webkit-transform-origin:0 0;
+  -o-transform-origin:0 0;
+  -moz-transform-origin:0 0;
+  -webkit-transform-origin:0 0;
+}
+
+input[type='range'] {
+    -webkit-appearance: none !important;
+    background:rgba(0,255,255,0.3);
+    height:10px;
+    width:300px;
+}
+input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background:blue;
+    height:10px;
+    width:10px;
+}
+input[type='button'] {
+    -webkit-appearance: none !important;
+    background:mintcream;
+    height:30px;
+    border-radius:5px;
+    border-color:#f5f5f5;
+    border-width:2px;
+}
+input[type='checkbox'] {
+    height:16px;
+    width:16px;
+}

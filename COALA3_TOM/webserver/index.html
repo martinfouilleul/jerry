@@ -1,0 +1,121 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>COALA</title>
+	<link rel="stylesheet" href="css/main.css" type="text/css" media="screen"/>
+  <script type="text/javascript" src="js/main.js"></script>
+  <script type="text/javascript" src="js/jquery.js"></script>
+  <script type="text/javascript" src="js/jquery.filedownload.js"></script>
+  <script type="text/javascript" src="js/fft/complex_array.js"></script>
+  <script type="text/javascript" src="js/fft/fft.js"></script>
+</head>
+
+<body onload="onStartup()">
+  <p><span class="title">COALA</span><span id="version-field">[version unknown]</span><span>   </span><span class="message" id="message"></span></p>
+  
+  <div id="mainwrapper">
+    <form method="GET" class="twicebigger">
+      <input style="margin-left:6px;" type="checkbox" name="bypass" value="0" onclick="handleCheckbox(this,'bypass')" id="bypasscheckbox"/>bypass<br/>
+    </form>
+ 
+    <div id="controlwrapper" class="center-container">
+      <div class="controls-wrapper">
+      <form method="GET">
+        <input style="background:palegreen;" type="button" name="Start" value="start" onclick="handleCheckbox(this,'start')" id="start" />
+        <input style="background:lightyellow;" type="button" name="Pause" value="pause" onclick="handleCheckbox(this,'pause')" id="pause" disabled/>
+        <input style="background:lightpink;" type="button" name="Stop" value="stop" onclick="handleCheckbox(this,'stop')" id="stop"/>
+        <input style="background:black; color:white;" type="button" name="Exit" value="exit" onclick="handleCheckbox(this,'exit')" id="exit"/>
+        <input style="background:lightblue; color:gray;" type="button" name="toggleosc" value="start OSC server" onclick="handleButton('toggleosc')" id="toggleosc"/>
+      </form>
+
+      <button type="button" name="getdata" onclick="handleOutDataRequest()">Download output data</button>
+
+      <form id="upload-form" enctype="multipart/form-data" method="post" onsubmit="handleMatlabFilesUpload(this);return false;">
+        <button type="submit" id="upload-button">Upload Matlab files</button>
+        <input style="width:165px;" id="file-select" type="file" name="matlab" multiple/>
+      </form>
+
+      <button type="button" name="getdata" onclick="handleTransferFunctionRequest()">Display transfer function</button>
+      <br>
+      <form method="GET">
+        <input type="checkbox" name="activecontrolon" value="0" onclick="handleCheckbox(this,'activecontrolon')" id="activecontrolcheckbox"/>modal active control<br/>
+        <input type="checkbox" name="modulatedgainon" value="0" onclick="handleCheckbox(this,'modulatedgainon')" id="modulatedgaincheckbox"/>modulated gain<br/>
+        <input type="checkbox" name="biquadon" value="0" onclick="handleCheckbox(this,'biquadon')" id="biquadcheckbox"/>biquad (2nd order filter)<br/>
+        <input type="checkbox" name="genon" value="0" onclick="handleCheckbox(this,'genon')" id="gencheckbox"/>gen~ (Max MSP module)<br/>
+        <input type="checkbox" name="chirpon" value="0" onclick="handleCheckbox(this,'chirpon')" id="chirpcheckbox"/>chirp<br/>
+      </form>
+      <br/>
+      <form method="GET">
+        <input type="checkbox" name="realtimeon" value="0" onclick="handleCheckbox(this,'realtimeon')" id="realtimecheckbox"/>hard real time<br/>
+        <input type="checkbox" name="sharetimeon" value="0" onclick="handleCheckbox(this,'sharetimeon')" id="sharetimecheckbox"/>share time if possible<br/>
+        <input type="checkbox" name="autoperiodon" value="0" onclick="handleCheckbox(this,'autoperiodon')" id="autoperiodcheckbox"/>automatic sample period<br/>
+        <input type="checkbox" name="recorddataon" value="0" onclick="handleCheckbox(this,'recorddataon')" id="recorddatacheckbox"/>record data<br/>
+      </form>
+      <br>
+      <form method="GET">
+      <label class="inline">gain   </label>
+      <input type="range" id="gainslider" value="0.1" min="-1.0" max="1.0" step="0.01" oninput="handleInput(this.value, 'gainval')" />
+      <span id="gainval">0.1</span>
+      </form>
+    
+      <form method="GET">
+      <label class="inline">gain mod. freq.</label>
+      <input style="width:230px;" type="range" id="modulatedgainfreqslider" value="0.0" min="0.0" max="440" step="0.001" oninput="handleInput(this.value, 'param1val')" />
+      <span id="param1val">0.0</span>
+      </form>
+
+      <form method="GET">
+      <label class="inline">period</label>
+      <input type="range" id="periodslider" value="50" min="10" max="100" step="1" oninput="handleInput(this.value, 'periodval')" />
+      <span id="periodval">50</span> μs
+      </form>
+
+      <form method="GET">
+      <label class="inline">time   </label>
+      <input type="range" id="timeslider" value="5" min="0.5" max="60.5" step="0.5" oninput="handleInput(this.value, 'timeval')" />
+      <span id="timeval">5</span> sec.
+      </form>
+    
+      <form method="GET">
+      <label class="inline">smoothing time </label>
+      <input style="width:220px;" type="range" id="fadeslider" value="0.01" min="0.01" max="2.0" step="0.01" oninput="handleInput(this.value, 'fadeval')" />
+      <span id="fadeval">0.01</span> sec.
+      </form>
+
+      <form method="GET">
+      <label class="inline">chirp start </label>
+      <input style="width:270px;" type="range" min="20" max="1000" id="chirpbeginslider" value="80" step="10" oninput="handleInput(this.value, 'chirpbeginval')" />
+      <span id="chirpbeginval">80</span> Hz
+      </form>
+
+      <form method="GET">
+      <label class="inline">chirp end </label>
+      <input style="width:270px;" type="range" min="100" max="10000" id="chirpendslider" value="2000" step="100" oninput="handleInput(this.value, 'chirpendval')" />
+      <span id="chirpendval">2000</span> Hz
+      </form>
+      </div>
+      <div class="info" id="info-area">
+        <div class="diagram">
+          <img src="images/diagram_v2.png" width=400/>
+          <div class="switch" id="modalswitch"><img id="modalswitchimg" src="images/switchoff.png" width=38/></div>
+          <div class="switch" id="modulatedgainswitch"><img id="modulatedgainswitchimg" src="images/switchoff.png" width=38/></div>
+          <div class="switch" id="biquadswitch"><img id="biquadswitchimg" src="images/switchoff.png" width=38/></div>
+          <div class="switch" id="chirpswitch"><img id="chirpswitchimg" src="images/switchoff.png" width=38/></div>
+          <div class="switch" id="genswitch"><img id="genswitchimg" src="images/switchoff.png" width=38/></div>
+        </div>
+        <div id="elapsed">0:00:00</div>
+        <div id="coalastatus">(unknown status)</div>
+      </div>
+    </div>
+  </div>
+  <div class="panel">
+    <div id="fft" class="example">
+      <canvas id="fftcanvas" width="1000" height="400"></canvas>
+    </div>
+  </div>
+  <canvas id="graph1" width="1000" height="200"></canvas>
+  <div id="console"/>
+</body>
+</html>

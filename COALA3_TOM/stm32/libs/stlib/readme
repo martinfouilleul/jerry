@@ -1,0 +1,20 @@
+François Beaulier 08/12/2015 fbeaulier@ingelibre.fr
+
+Bibliothèque HAL de ST
+----------------------
+Cette bibliothèque fait partie du bundle logiciel STM32Cube_FW_F0_V1.4.0 fourni par ST.
+A ce jour il peut être téléchargé ici:
+http://www.st.com/web/catalog/tools/FM146/CL2167/SC2004/PF260612#
+
+J'ai gardé les deux répertoires suivants:
+STM32Cube_FW_F0_V1.4.0/Drivers/CMSIS/
+STM32Cube_FW_F0_V1.4.0/Drivers/STM32F0xx_HAL_Driver/
+
+Et j'ai fait un peu de nettoyage
+
+Dans STM32F0xx_HAL_Driver:
+rm -f STM32F070xB_HAL_Driver_UM.chm STM32F072xB_HAL_Driver_UM.chm STM32F091xC_HAL_Driver_UM.chm
+
+Dans CMSIS
+rm -rf Documentation/ DSP_Lib/ Lib/
+
