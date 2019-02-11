@@ -1,3 +1,4 @@
+//Author: Antoine CAILLON & Martin FOUILLEUL
 #pragma once
 
 struct TomController
