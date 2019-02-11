@@ -1,6 +1,16 @@
 //Author: Antoine CAILLON & Martin FOUILLEUL
 #pragma once
 
+
+/**
+ * This struct contains the modal parameters of the real membrane, and the
+ * desired one (i.e frequency, damping). The nextStep function is assumed to
+ * estimate the position, velocity and acceleration of the desired membrane
+ * given the measurement of the two previous positions. The control variable u
+ * is then calculated according to the actual and desired positions, speeds,
+ * and accelerations. Parameters l1 and l2 are responsible for the behavior of
+ * the PID.
+*/
 struct TomController
 {
     TomController(int sr,
